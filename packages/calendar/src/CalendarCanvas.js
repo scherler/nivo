@@ -105,7 +105,7 @@ const CalendarCanvas = memo(
             weekDirection,
             breakpoint,
         })
-        colorScale = useColorScale({ data, minValue, maxValue, colors, colorScale })
+        const colorScaleFn = useColorScale({ data, minValue, maxValue, colors, colorScale })
         const monthLegends = useMonthLegends({
             months,
             direction,
@@ -118,7 +118,7 @@ const CalendarCanvas = memo(
             yearLegendPosition,
             yearLegendOffset,
         })
-        days = useDays({ days, data, colorScale, emptyColor })
+        days = useDays({ days, data, colorScale: colorScaleFn, emptyColor })
         const [currentDay, setCurrentDay] = useState(null)
         const theme = useTheme()
         const formatValue = useValueFormatter(valueFormat)
@@ -176,10 +176,10 @@ const CalendarCanvas = memo(
             })
 
             legends.forEach(legend => {
-                const legendData = colorScale.ticks(legend.itemCount).map(value => ({
+                const legendData = colorScaleFn.ticks(legend.itemCount).map(value => ({
                     id: value,
                     label: formatLegend(value),
-                    color: colorScale(value),
+                    color: colorScaleFn(value),
                 }))
 
                 renderLegendToCanvas(ctx, {

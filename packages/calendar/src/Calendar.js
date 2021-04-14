@@ -72,7 +72,7 @@ const Calendar = ({
         height,
         partialMargin
     )
-    let { months, years, days, ...rest } = useCalendarLayout({
+    let { months, years, days } = useCalendarLayout({
         width: innerWidth,
         height: innerHeight,
         from,
@@ -86,7 +86,7 @@ const Calendar = ({
         weekDirection,
         breakpoint,
     })
-    colorScale = useColorScale({ data, minValue, maxValue, colors, colorScale })
+    const colorScaleFn = useColorScale({ data, minValue, maxValue, colors, colorScale })
     const monthLegends = useMonthLegends({
         months,
         direction,
@@ -94,12 +94,18 @@ const Calendar = ({
         monthLegendOffset,
     })
     const yearLegends = useYearLegends({ years, direction, yearLegendPosition, yearLegendOffset })
-    days = useDays({ days, data, colorScale, emptyColor })
+    days = useDays({ days, data, colorScale: colorScaleFn, emptyColor })
     const formatLegend = useValueFormatter(legendFormat)
     const formatValue = useValueFormatter(valueFormat)
 
     return (
-        <SvgWrapper width={outerWidth} height={outerHeight} margin={margin} theme={theme}>
+        <SvgWrapper
+            width={outerWidth}
+            height={outerHeight}
+            margin={margin}
+            theme={theme}
+            role={role}
+        >
             {days.map(d => (
                 <CalendarDay
                     key={d.date.toString()}
@@ -132,10 +138,10 @@ const Calendar = ({
             <CalendarMonthLegends months={monthLegends} legend={monthLegend} theme={theme} />
             <CalendarYearLegends years={yearLegends} legend={yearLegend} theme={theme} />
             {legends.map((legend, i) => {
-                const legendData = colorScale.ticks(legend.itemCount).map(value => ({
+                const legendData = colorScaleFn.ticks(legend.itemCount).map(value => ({
                     id: value,
                     label: formatLegend(value),
-                    color: colorScale(value),
+                    color: colorScaleFn(value),
                 }))
 
                 return (
