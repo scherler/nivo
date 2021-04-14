@@ -3,16 +3,13 @@ import { storiesOf } from '@storybook/react'
 import { generateDayCounts } from '@nivo/generators'
 import { Calendar } from '../src'
 
-const from = new Date(2020, 0, 1)
-const to = new Date(2020, 11, 31)
-const fromMonth = new Date(2018, 11, 1)
-const toMonth = new Date(2019, 4, 0)
+const from = new Date(2019, 6, 1)
+const to = new Date(2019, 11, 31)
 const data = generateDayCounts(from, to)
-const monthLyData = generateDayCounts(fromMonth, toMonth)
 
 const commonProps = {
-    width: 800,
-    height: 800,
+    width: 900,
+    height: 260,
     margin: {
         top: 50,
         right: 10,
@@ -22,38 +19,11 @@ const commonProps = {
     from: from.toISOString(),
     to: to.toISOString(),
     data,
-    align: 'top-left',
-    monthSpacing: 20,
-    yearSpacing: 20,
-    breakpoint: 4,
-    monthBorderWidth: 0,
 }
 
 const stories = storiesOf('Calendar', module)
 
 stories.add('default', () => <Calendar {...commonProps} />)
-
-stories.add('month granualrity', () => (
-    <Calendar
-        {...commonProps}
-        granularity="month"
-        direction="horizontal"
-        weekDirection="vertical"
-        from={fromMonth.toISOString()}
-        to={toMonth.toISOString()}
-        data={monthLyData}
-    />
-))
-
-stories.add('calendar grid', () => (
-    <Calendar
-        {...commonProps}
-        weekDirection="horizontal"
-        monthSpacing={30}
-        breakpoint={4}
-        granularity="month"
-    />
-))
 
 const japaneseMonths = [
     '一月',
@@ -77,95 +47,11 @@ stories.add('custom colors', () => (
     <Calendar colors={['#a1cfff', '#468df3', '#a053f0', '#9629f0', '#8428d8']} {...commonProps} />
 ))
 
-stories.add('MHH', () => (
-    <Calendar
-        {...commonProps}
-        direction="horizontal"
-        granularity="month"
-        weekDirection="horizontal"
-    />
+stories.add('vertical calendar', () => (
+    <Calendar direction="vertical" {...commonProps} height={600} />
 ))
 
 const CustomTooltip = data => {
-    if (data.value === undefined) return null
-    return (
-        <span style={{ color: data.color, backgroundColor: 'black', padding: '10px' }}>
-            {data.day} : {data.value}
-        </span>
-    )
-}
-
-stories.add('custom tooltip', () => <Calendar tooltip={CustomTooltip} {...commonProps} />)
-
-stories.add('month spacing', () => <Calendar {...commonProps} monthSpacing={25} />)
-
-const formater = value => value / 10 + 'M'
-
-stories.add('custom legend formater', () => (
-    <Calendar
-        {...commonProps}
-        margin={{ top: 40, right: 40, bottom: 40, left: 40 }}
-        valueFormat=".2f"
-        legendFormat={formater}
-        height={460}
-        legends={[
-            {
-                anchor: 'top',
-                direction: 'row',
-                translateY: 36,
-                itemCount: 4,
-                itemWidth: 42,
-                itemHeight: 36,
-                itemsSpacing: 14,
-                itemDirection: 'right-to-left',
-            },
-        ]}
-    />
-))
-stories.add('MHV', () => (
-    <Calendar
-        {...commonProps}
-        direction="horizontal"
-        granularity="month"
-        weekDirection="vertical"
-    />
-))
-
-stories.add('MVH', () => (
-    <Calendar
-        {...commonProps}
-        direction="vertical"
-        granularity="month"
-        weekDirection="horizontal"
-    />
-))
-
-stories.add('MVV', () => (
-    <Calendar {...commonProps} direction="vertical" granularity="month" weekDirection="vertical" />
-))
-
-stories.add('YHH', () => (
-    <Calendar
-        {...commonProps}
-        direction="horizontal"
-        granularity="year"
-        weekDirection="horizontal"
-    />
-))
-
-stories.add('YHV', () => (
-    <Calendar {...commonProps} direction="horizontal" granularity="year" weekDirection="vertical" />
-))
-
-stories.add('YVH', () => (
-    <Calendar {...commonProps} direction="vertical" granularity="year" weekDirection="horizontal" />
-))
-
-stories.add('YVV', () => (
-    <Calendar {...commonProps} direction="vertical" granularity="year" weekDirection="vertical" />
-))
-
-const CustomTooltip = ({ data }) => {
     if (data.value === undefined) return null
     return (
         <span style={{ color: data.color, backgroundColor: 'black', padding: '10px' }}>
