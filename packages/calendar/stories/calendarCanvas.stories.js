@@ -88,3 +88,7 @@ stories.add('custom value and legend formaters', () => (
         ]}
     />
 ))
+
+stories.add('month granularity', () => (
+    <CalendarCanvas {...commonProps} granularity="month" breakpoint={6} />
+))

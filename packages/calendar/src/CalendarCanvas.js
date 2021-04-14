@@ -72,6 +72,10 @@ const CalendarCanvas = memo(
         dayBorderWidth,
         daySpacing,
 
+        granularity,
+        weekDirection,
+        breakpoint,
+
         isInteractive,
         tooltip,
         onClick,
@@ -87,7 +91,7 @@ const CalendarCanvas = memo(
             height,
             partialMargin
         )
-        const { months, years, ...rest } = useCalendarLayout({
+        let { months, years, days } = useCalendarLayout({
             width: innerWidth,
             height: innerHeight,
             from,
@@ -97,8 +101,11 @@ const CalendarCanvas = memo(
             monthSpacing,
             daySpacing,
             align,
+            granularity,
+            weekDirection,
+            breakpoint,
         })
-        const colorScaleFn = useColorScale({ data, minValue, maxValue, colors, colorScale })
+        colorScale = useColorScale({ data, minValue, maxValue, colors, colorScale })
         const monthLegends = useMonthLegends({
             months,
             direction,
@@ -111,7 +118,7 @@ const CalendarCanvas = memo(
             yearLegendPosition,
             yearLegendOffset,
         })
-        const days = useDays({ days: rest.days, data, colorScale: colorScaleFn, emptyColor })
+        days = useDays({ days, data, colorScale, emptyColor })
         const [currentDay, setCurrentDay] = useState(null)
         const theme = useTheme()
         const formatValue = useValueFormatter(valueFormat)
@@ -169,10 +176,10 @@ const CalendarCanvas = memo(
             })
 
             legends.forEach(legend => {
-                const legendData = colorScaleFn.ticks(legend.itemCount).map(value => ({
+                const legendData = colorScale.ticks(legend.itemCount).map(value => ({
                     id: value,
                     label: formatLegend(value),
-                    color: colorScaleFn(value),
+                    color: colorScale(value),
                 }))
 
                 renderLegendToCanvas(ctx, {

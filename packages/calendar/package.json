@@ -37,9 +37,6 @@
     "lodash.memoize": "^4.1.2",
     "lodash.range": "^3.2.0"
   },
-  "devDependencies": {
-    "@nivo/core": "0.67.0"
-  },
   "peerDependencies": {
     "@nivo/core": "0.67.0",
     "prop-types": ">= 15.5.10 < 16.0.0",

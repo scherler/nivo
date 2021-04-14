@@ -10,9 +10,11 @@ import React from 'react'
 import { SvgWrapper, useTheme, useDimensions, withContainer, useValueFormatter } from '@nivo/core'
 import { BoxLegendSvg } from '@nivo/legends'
 import { CalendarPropTypes, CalendarDefaultProps } from './props'
+
 import CalendarYearLegends from './CalendarYearLegends'
 import CalendarMonthPath from './CalendarMonthPath'
 import CalendarMonthLegends from './CalendarMonthLegends'
+
 import { useMonthLegends, useYearLegends, useCalendarLayout, useDays, useColorScale } from './hooks'
 import CalendarDay from './CalendarDay'
 
@@ -50,6 +52,10 @@ const Calendar = ({
     dayBorderWidth,
     daySpacing,
 
+    granularity,
+    weekDirection,
+    breakpoint,
+
     isInteractive,
     tooltip,
     onClick,
@@ -66,7 +72,7 @@ const Calendar = ({
         height,
         partialMargin
     )
-    const { months, years, ...rest } = useCalendarLayout({
+    let { months, years, days, ...rest } = useCalendarLayout({
         width: innerWidth,
         height: innerHeight,
         from,
@@ -76,8 +82,11 @@ const Calendar = ({
         monthSpacing,
         daySpacing,
         align,
+        granularity,
+        weekDirection,
+        breakpoint,
     })
-    const colorScaleFn = useColorScale({ data, minValue, maxValue, colors, colorScale })
+    colorScale = useColorScale({ data, minValue, maxValue, colors, colorScale })
     const monthLegends = useMonthLegends({
         months,
         direction,
@@ -85,18 +94,12 @@ const Calendar = ({
         monthLegendOffset,
     })
     const yearLegends = useYearLegends({ years, direction, yearLegendPosition, yearLegendOffset })
-    const days = useDays({ days: rest.days, data, colorScale: colorScaleFn, emptyColor })
+    days = useDays({ days, data, colorScale, emptyColor })
     const formatLegend = useValueFormatter(legendFormat)
     const formatValue = useValueFormatter(valueFormat)
 
     return (
-        <SvgWrapper
-            width={outerWidth}
-            height={outerHeight}
-            margin={margin}
-            theme={theme}
-            role={role}
-        >
+        <SvgWrapper width={outerWidth} height={outerHeight} margin={margin} theme={theme}>
             {days.map(d => (
                 <CalendarDay
                     key={d.date.toString()}
@@ -129,10 +132,10 @@ const Calendar = ({
             <CalendarMonthLegends months={monthLegends} legend={monthLegend} theme={theme} />
             <CalendarYearLegends years={yearLegends} legend={yearLegend} theme={theme} />
             {legends.map((legend, i) => {
-                const legendData = colorScaleFn.ticks(legend.itemCount).map(value => ({
+                const legendData = colorScale.ticks(legend.itemCount).map(value => ({
                     id: value,
                     label: formatLegend(value),
-                    color: colorScaleFn(value),
+                    color: colorScale(value),
                 }))
 
                 return (

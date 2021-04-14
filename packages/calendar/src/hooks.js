@@ -26,6 +26,9 @@ export const useCalendarLayout = ({
     monthSpacing,
     daySpacing,
     align,
+    granularity,
+    weekDirection,
+    breakpoint,
 }) =>
     useMemo(
         () =>
@@ -39,8 +42,24 @@ export const useCalendarLayout = ({
                 monthSpacing,
                 daySpacing,
                 align,
+                granularity,
+                weekDirection,
+                breakpoint,
             }),
-        [width, height, from, to, direction, yearSpacing, monthSpacing, daySpacing, align]
+        [
+            width,
+            height,
+            from,
+            to,
+            direction,
+            yearSpacing,
+            monthSpacing,
+            daySpacing,
+            align,
+            granularity,
+            weekDirection,
+            breakpoint,
+        ]
     )
 
 export const useColorScale = ({ data, minValue, maxValue, colors, colorScale }) =>
@@ -86,3 +105,56 @@ export const useDays = ({ days, data, colorScale, emptyColor }) =>
             }),
         [days, data, colorScale, emptyColor]
     )
+
+export const useDaysHandlers = ({
+    data,
+    isInteractive,
+    onMouseEnter,
+    onMouseMove,
+    onMouseLeave,
+    onClick,
+    tooltip,
+}) => {
+    const { showTooltipFromEvent, hideTooltip } = useTooltip()
+
+    const handleMouseEnter = useMemo(() => {
+        return event => {
+            // const formatedData = { ...data, value: formatValue(data.value) }
+            showTooltipFromEvent(React.createElement(tooltip, { data }), event)
+            onMouseEnter && onMouseEnter(data, event)
+        }
+    }, [data, onMouseEnter, showTooltipFromEvent, tooltip])
+
+    const handleMouseMove = useMemo(() => {
+        return event => {
+            // const formatedData = { ...data, value: formatValue(data.value) }
+            showTooltipFromEvent(React.createElement(tooltip, { data }), event)
+            onMouseMove && onMouseMove(data, event)
+        }
+    }, [data, onMouseMove, showTooltipFromEvent, tooltip])
+
+    const handleMouseLeave = useMemo(() => {
+        return event => {
+            hideTooltip()
+            onMouseLeave && onMouseLeave(data, event)
+        }
+    }, [data, onMouseLeave, hideTooltip])
+
+    const handleClick = useMemo(() => {
+        return event => {
+            onClick && onClick(data, event)
+        }
+    }, [data, onClick])
+
+    const handlers = useMemo(
+        () => ({
+            onMouseEnter: isInteractive ? handleMouseEnter : undefined,
+            onMouseMove: isInteractive ? handleMouseMove : undefined,
+            onMouseLeave: isInteractive ? handleMouseLeave : undefined,
+            onClick: isInteractive ? handleClick : undefined,
+        }),
+        [isInteractive, handleMouseEnter, handleMouseMove, handleMouseLeave, handleClick]
+    )
+
+    return handlers
+}
