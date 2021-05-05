@@ -47,7 +47,7 @@ declare module '@scherler/nivo-calendar' {
     }
 
     export interface ColorScale {
-        (value: number | { valueOf(): number }): Range
+        (value: number | { valueOf(): number }): any[]
         ticks(count?: number): number[]
     }
 
@@ -137,15 +137,15 @@ declare module '@scherler/nivo-calendar' {
     }>
 
     export interface TimeRangeDatum {
-        day: Date
+        date: Date
+        day: string
         value: number
     }
 
     export interface TimeRangeData {
-        from: Date
-        to: Date
         data: TimeRangeDatum[]
     }
+
     export type TimeRangeProps = TimeRangeData &
         TimeRangeCommonProps &
         Partial<{
@@ -154,4 +154,12 @@ declare module '@scherler/nivo-calendar' {
         }> &
         Dimensions
 
+    export type TimeRangeSvgProps = TimeRangeData &
+        TimeRangeCommonProps &
+        Partial<{
+            onClick: (datum: CalendarDayData, event: React.MouseEvent<SVGRectElement>) => void
+            role: string
+        }>
+
+    export class ResponsiveTimeRange extends React.Component<TimeRangeSvgProps> { }
 }
